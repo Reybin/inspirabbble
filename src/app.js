@@ -20,7 +20,7 @@
 	App.prototype.redraw = function(rows, cols) {
 		$('#containers').remove();
 		var containers = $('<div id="containers" />').appendTo('body'),
-			container = $('<div class="container" />'),
+			container = $('<div />').addClass('container'),
 			cells = rows * cols;
 		for (var i = 0; i < cells; i++) {
 			container
@@ -28,7 +28,8 @@
 				.css({
 					backgroundColor : rainbow(cells, snake(i, cols)),
 					width : (100 / cols) + '%' })
-				.appendTo(containers);
+				.appendTo(containers)
+				.addClass('bounceIn animated');
 		};
 		containers = $('.container');
 		containers.height(containers.width());
