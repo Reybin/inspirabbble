@@ -15,6 +15,7 @@
 
 	App.prototype.init = function() {
 		this.redraw(5, 5);
+		this.$irefresh = setInterval(this.refresh, 10 * 1000); // 10 seconds.
 	};
 
 	// Redraw the interface.
