@@ -8,7 +8,7 @@ module.exports = function(grunt) {
             },
             build: {
                 src: 'src/app.js',
-                dest: 'lib/app.min.js'
+                dest: 'bundles/lib/app.min.js'
             }
         }
     });
