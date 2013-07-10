@@ -5,6 +5,7 @@
  */
 ! function(doc, $) {
 
+	/////////////////////////////////////
 	// The class definition of the app.
 
 	var App = function(doc) {
@@ -20,7 +21,7 @@
 	App.prototype.redraw = function(rows, cols) {
 		$('#containers').remove();
 		var containers = $('<div id="containers" />').appendTo('body'),
-			container = $('<div />').addClass('container'),
+			container = $('<div />').addClass('container bounceIn animated'),
 			cells = rows * cols;
 		for (var i = 0; i < cells; i++) {
 			container
@@ -28,14 +29,20 @@
 				.css({
 					backgroundColor : rainbow(cells, snake(i, cols)),
 					width : (100 / cols) + '%' })
-				.appendTo(containers)
-				.addClass('bounceIn animated');
+				.appendTo(containers);
 		};
 		containers = $('.container');
 		containers.height(containers.width());
 	};
 
-	// Events.
+	// Refresh dribbbles.
+	App.prototype.refresh = function() {
+		// 1. Get latest dribbble via AJAX http://dribbble.com/api
+		// 2. Load the image into the containers: .container > img
+	};
+
+	///////////////////////////
+	// The wire up of events.
 
 	$(doc).on('ready.app', function() {
 		setTimeout(function() {
