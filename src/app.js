@@ -14,13 +14,22 @@
 	};
 
 	App.prototype.init = function() {
-		this.redraw(5, 5);
+		var instance = this;
+		// Compile templates.
+		this.$templates = {};
+		$('[type="text/x-template"]').each(function() {
+			var template = $(this);
+			instance.$templates[template.attr('id')] = Mustache.compile(template.text());
+		});
+		// Render the interface.
+		this.render(5, 5);
+		// Schedule the refresher.
 		this.refresh();
 		this.$irefresh = setInterval(this.refresh, 10 * 1000); // 10 seconds.
 	};
 
-	// Redraw the interface.
-	App.prototype.redraw = function(rows, cols) {
+	// Render the interface.
+	App.prototype.render = function(rows, cols) {
 		$('#containers').remove();
 		var containers = $('<div id="containers" />').appendTo('body'),
 			container = $('<div />').addClass('container bounceIn animated'),

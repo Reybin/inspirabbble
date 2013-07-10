@@ -4,10 +4,24 @@
 	<meta charset="UTF-8">
 	<title>Inspirabbble</title>
 	<script src="bundles/jquery/jquery-1.10.2.min.js"></script>
+	<script src="bundles/mustache/mustache-0.7.2.min.js"></script>
 	<script src="src/app.js"></script>
 	<link rel="stylesheet" href="bundles/screen.css">
 </head>
 <body>
 	
+	<!-- Templates -->
+	<script type="text/x-template" id="shots">
+		<div id="shots">
+		</div>
+	</script>
+	<script type="text/x-template" id="shot">
+		<div class="shot">
+			<img src="{{ url }}" alt="{{ title }}">
+			<div class="caption">
+				<h4>{{ title }}</h4>
+			</div>
+		</div>
+	</script>
 </body>
 </html>
