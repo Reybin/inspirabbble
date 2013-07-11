@@ -8,42 +8,76 @@
 	/////////////////////////////////////
 	// The class definition of the app.
 
-	var App = function(doc) {
-		this.$doc = $(doc);
+	var App = function() {
 		this.init();
 	};
 
+	/**
+	 * Initialize the app.
+	 */
 	App.prototype.init = function() {
+
 		var instance = this;
+		this.$shots = [];
+
+		// Check for user settings.
+		if (!this.hasSettings()) {
+			this.resetSettings();
+		}
+
+		// Check dependencies.
+		if (!Modernizr.localstorage) {
+			return unsupportedBrowser();
+		}
+
 		// Compile templates.
 		this.$templates = {};
 		$('[type="text/x-template"]').each(function() {
 			var template = $(this);
 			instance.$templates[template.attr('id')] = Mustache.compile(template.text());
 		});
+		
 		// Render the interface.
-		this.render(5, 5);
+		this.render();
+
 		// Schedule the refresher.
 		this.refresh();
 		this.$irefresh = setInterval(this.refresh, 10 * 1000); // 10 seconds.
+		
+		// Register global events.
+		$(window).on('resize', function() {
+			instance.render();
+		});
 	};
 
-	// Render the interface.
-	App.prototype.render = function(rows, cols) {
-		$('#containers').remove();
-		var containers = $('<div id="containers" />').appendTo('body'),
-			container = $('<div />').addClass('container bounceIn animated'),
+	/**
+	 * Render the interface.
+	 */
+	App.prototype.render = function() {
+
+		$('#shots').remove();
+		this.$shots = [];
+
+		var body = $('body'),
+			shots = $(this.$templates.shots()).appendTo(body),
+			shot = $(this.$templates.shot({})),
+			cols = parseInt(this.setting('cols'), 10),
+			width = body.width() / cols,
+			rows = Math.ceil(body.height() / width),
 			cells = rows * cols;
+
 		for (var i = 0; i < cells; i++) {
-			container
+			this.$shots.push(shot
 				.clone()
 				.css({
 					backgroundColor : rainbow(cells, snake(i, cols)),
-					width : (100 / cols) + '%' })
-				.appendTo(containers);
+					width : width })
+				.appendTo(shots)
+				.addClass('bounceIn animated'));
 		};
-		containers = $('.container');
-		containers.height(containers.width());
+
+		$('.shot').height(width);
+
 	};
 
 	// Refresh dribbbles.
@@ -52,21 +86,50 @@
 		// 2. Load the image into the containers: .container > img
 	};
 
+	// Add/set user settings.
+	App.prototype.setting = function(name, value) {
+		if (value === undefined) {
+			return localStorage[name];
+		} else {
+			localStorage[name] = value;
+		}
+	};
+
+	// Determine if any setting exists.
+	App.prototype.hasSettings = function() {
+		for (var key in defaultSettings) {
+			if (this.setting(defaultSettings[key]) === undefined) {
+				return false;
+			}
+		}
+		return true;
+	};
+
+	var defaultSettings = {
+		cols : 5
+	};
+
+	App.prototype.resetSettings = function() {
+		localStorage.clear();
+		this.setting('cols', 5);
+		this.setting('hasSettings', true);
+	};
+
 	///////////////////////////
 	// The wire up of events.
 
-	$(doc).on('ready.app', function() {
+	$(document).on('ready', function() {
 		setTimeout(function() {
 			// Initialize app.
-			doc.App = new App(doc);
-			// Register global events.
-			$(doc).on('resize', function() {
-				doc.App.init();
-			});
+			var app = window.App = new App();
 		}, 100);
 	});
 
 	// Private functions.
+
+	function unsupportedBrowser() {
+		alert('Unsupported browser');
+	}
 
 	function rainbow(numOfSteps, step) {
 	    // This function generates vibrant, "evenly spaced" colours (i.e. no clustering). This is ideal for creating easily distinguishable vibrant markers in Google Maps and other apps.
