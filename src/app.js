@@ -41,9 +41,8 @@
 		// Render the interface.
 		this.render();
 
-		// Schedule the refresher.
+		// Refresh the shots.
 		this.refresh();
-		this.$irefresh = setInterval(this.refresh, this.setting('refresh'));
 		
 		// Register global events.
 		$(window).on('resize', function() {
@@ -102,7 +101,7 @@
 		};
 
 		serie(this.$shots, function(s) {
-			s.find('.bg').addClass('bounceIn animated').show();
+			s.find('.bg').show();
 		}, 100, cols);
 
 		$('.shot').height(width);
@@ -113,8 +112,34 @@
 	 * Refresh shots.
 	 */
 	App.prototype.refresh = function() {
-		// 1. Get latest dribbble via AJAX http://dribbble.com/api
-		// 2. Load the image into the containers: .container > img
+
+		var instance = this;
+		
+		$.getJSON('http://api.dribbble.com/shots/everyone?per_page=30', function(response) {
+
+			var loaded = 0;
+			
+			for (var i = 0; i < instance.$shots.length; i++) {
+				(function(i) {
+					var data = response.shots[i],
+						shot = $(instance.$templates.shot(data)),
+						old = instance.$shots[i],
+						loader = $('<img/>')
+							.attr('src', data.image_url)
+							.on('load', function() {
+								old.html(shot.children());
+								++loaded
+								if (loaded == instance.$shots.length) {
+									setTimeout(function() {
+										instance.refresh();
+									}, instance.setting('refresh'));
+								}
+							});
+				})(i);
+			};
+
+		})
+
 	};
 
 	// Default user settings.
