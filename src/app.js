@@ -19,6 +19,7 @@
 
 		var instance = this;
 		this.$shots = [];
+		this.$app = $('#app');
 
 		// Check for user settings.
 		if (!this.hasSettings()) {
@@ -48,6 +49,28 @@
 		$(window).on('resize', function() {
 			instance.render();
 		});
+
+		$(document).on('mouseenter.app, mouseleave.app', '.shot', function (e) {
+
+			var shot = $(e.target),
+				caption = shot.find('.caption');
+
+			$('.caption.in')
+				.removeClass('in')
+				.animate({ marginTop: 0 }, 100);
+
+			if (e.type == 'mouseenter') {
+				caption
+					.addClass('in')
+					.animate({ marginTop: -caption.height() }, 100);
+			} else {
+				caption
+					.removeClass('in')
+					.animate({ marginTop: 0 }, 100);
+			}
+
+
+		})
 	};
 
 	/**
@@ -58,23 +81,29 @@
 		$('#shots').remove();
 		this.$shots = [];
 
-		var body = $('body'),
-			shots = $(this.$templates.shots()).appendTo(body),
+		var shots = $(this.$templates.shots()).appendTo(this.$app),
 			shot = $(this.$templates.shot({})),
 			cols = parseInt(this.setting('cols'), 10),
-			width = body.width() / cols,
-			rows = Math.ceil(body.height() / width),
+			width = this.$app.width() / cols,
+			rows = Math.ceil(this.$app.height() / width),
 			cells = rows * cols;
 
 		for (var i = 0; i < cells; i++) {
-			this.$shots.push(shot
-				.clone()
-				.css({
-					backgroundColor : rainbow(cells, snake(i, cols)),
-					width : width })
-				.appendTo(shots)
-				.addClass('bounceIn animated'));
+
+			var s = shot.clone()
+				.width(width);
+
+			s.find('.bg')
+				.hide()
+				.css('background-color', rainbow(cells, snake(i, cols)));
+
+			s.appendTo(shots);
+			this.$shots.push(s);
 		};
+
+		serie(this.$shots, function(s) {
+			s.find('.bg').addClass('bounceIn animated').show();
+		}, 100, cols);
 
 		$('.shot').height(width);
 
@@ -91,7 +120,7 @@
 	// Default user settings.
 	var defaultSettings = {
 		cols : 5,
-		refres : 10 * 1000
+		refresh : 10 * 1000
 	};
 
 	/**
@@ -139,6 +168,12 @@
 
 	// Private functions.
 
+	function dialog(url) {
+		$.get(url, function(data) {
+			console.log(data);
+		});
+	}
+
 	function unsupportedBrowser() {
 		alert('Unsupported browser');
 	}
@@ -169,6 +204,22 @@
 			reverse = !!(way % 2),
 			steps = (step % corner) + 1;
 		return reverse ? ((way * corner) + (corner - steps)) : step;
+	}
+
+	function serie(args, fn, delay, corner) {
+		
+		var i = 0,
+			run = function() {
+				if (i == args.length) {
+					return
+				}
+				fn(args[snake(i, corner)]);
+				i++;
+				setTimeout(run, delay);
+			};
+
+		run()
+
 	}
 
 }(window, jQuery);

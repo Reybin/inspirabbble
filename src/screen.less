@@ -15,6 +15,11 @@ body {
 	background-color: #000;
 }
 
+#app {
+	height: 100%;
+	overflow: hidden;
+}
+
 #shots {
 	width: 100%;
 	height: 100%;
@@ -23,13 +28,31 @@ body {
 	.shot {
 		float: left;
 		width: 20%;
+		overflow: hidden;
+
+		.bg {
+			width: 100%;
+			height: 100%;
+			float: left;
+		}
 
 		.caption {
 			background-color: rgba(50, 50, 50, 0.35);
-			height: 30%;
+			height: 60px;
 			top: 100%;
 			position: relative;
 			overflow: hidden;
+
+			h4 {
+				margin: 0;
+				padding: 10px;
+				font-size: 20px;
+				line-height: 20px;
+				font-family: 'Pathway Gothic One', sans-serif;
+				font-weight: 400;
+				color: #fff;
+				text-shadow: 0 -1px 0 #374683;
+			}
 		}
 	}
 }
