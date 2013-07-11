@@ -42,7 +42,7 @@
 
 		// Schedule the refresher.
 		this.refresh();
-		this.$irefresh = setInterval(this.refresh, 10 * 1000); // 10 seconds.
+		this.$irefresh = setInterval(this.refresh, this.setting('refresh'));
 		
 		// Register global events.
 		$(window).on('resize', function() {
@@ -80,13 +80,23 @@
 
 	};
 
-	// Refresh dribbbles.
+	/**
+	 * Refresh shots.
+	 */
 	App.prototype.refresh = function() {
 		// 1. Get latest dribbble via AJAX http://dribbble.com/api
 		// 2. Load the image into the containers: .container > img
 	};
 
-	// Add/set user settings.
+	// Default user settings.
+	var defaultSettings = {
+		cols : 5,
+		refres : 10 * 1000
+	};
+
+	/**
+	 * Set or get user settings.
+	 */
 	App.prototype.setting = function(name, value) {
 		if (value === undefined) {
 			return localStorage[name];
@@ -95,7 +105,9 @@
 		}
 	};
 
-	// Determine if any setting exists.
+	/**
+	 * Determine if user settings exists.
+	 */
 	App.prototype.hasSettings = function() {
 		for (var key in defaultSettings) {
 			if (this.setting(defaultSettings[key]) === undefined) {
@@ -105,14 +117,14 @@
 		return true;
 	};
 
-	var defaultSettings = {
-		cols : 5
-	};
-
+	/**
+	 * Reset all user settings.
+	 */
 	App.prototype.resetSettings = function() {
 		localStorage.clear();
-		this.setting('cols', 5);
-		this.setting('hasSettings', true);
+		for (key in defaultSettings) {
+			this.setting(key, defaultSettings[key]);
+		}
 	};
 
 	///////////////////////////
