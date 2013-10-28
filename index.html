@@ -3,17 +3,12 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Inspirabbble</title>
-	<script src="bundles/modernizr/modernizr-2.6.2.min.js"></script>
 	<link rel="stylesheet" href="bundles/screen.css">
 	<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Pathway+Gothic+One">
+	<script src="bundles/app.js"></script>
 </head>
 <body>
 	<div id="app"></div>
-
-	<!-- Scripts -->
-	<script src="bundles/jquery/jquery-1.10.2.min.js"></script>
-	<script src="bundles/mustache/mustache-0.7.2.min.js"></script>
-	<script src="src/app.js"></script>
 
 	<!-- Templates -->
 	<script type="text/x-template" id="shots">
@@ -22,7 +17,8 @@
 	</script>
 	<script type="text/x-template" id="shot">
 		<div class="shot">
-			<div class="bg bounceIn animated" style="background:url({{ image_url }})">
+			<div class="bg bounceIn animated">
+				<img src="{{image_url}}" alt="" width="100%">
 				<div class="caption">
 					<h4>{{ title }}</h4>
 				</div>
